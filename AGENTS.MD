@@ -1,10 +1,10 @@
-# C4 Visual Constructor - AI Agent Guide
+# C4 Constructor - AI Agent Guide
 
 This guide helps AI agents understand the project architecture, patterns, and conventions for consistent development.
 
 ## Project Overview
 
-**C4 Visual Constructor** is a visual diagram editor for C4 architecture models with Structurizr DSL import/export. Built with React, TypeScript, ReactFlow, and Zustand.
+**C4 Constructor** is a visual diagram editor for C4 architecture models with Structurizr DSL import/export. Built with React, TypeScript, ReactFlow, and Zustand.
 
 **Tech Stack:**
 - React 18 + TypeScript
