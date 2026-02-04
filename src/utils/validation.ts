@@ -28,7 +28,7 @@ export function validateElement(element: C4Element): void {
 }
 
 export function isValidElementType(type: string): type is C4ElementType {
-  const validTypes: C4ElementType[] = ['person', 'softwareSystem', 'container', 'component', 'deploymentNode', 'infrastructureNode'];
+  const validTypes: C4ElementType[] = ['person', 'softwareSystem', 'container', 'component'];
   return validTypes.includes(type as C4ElementType);
 }
 

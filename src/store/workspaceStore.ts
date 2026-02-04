@@ -128,18 +128,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
         });
       }
 
-      // Automatically create a Deployment View for every new Deployment Node
-      if (type === 'deploymentNode') {
-        nextViews.push({
-          id: uuidv4(),
-          key: `deploy-${id}`,
-          type: 'deployment',
-          deploymentNodeId: id,
-          name: `${newElement.name} - Deployment`,
-          description: `Deployment view for ${newElement.name}`
-        });
-      }
-
       return {
         workspaceVersion: state.workspaceVersion + 1,
         workspace: {
@@ -196,7 +184,6 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
         let updated = { ...view };
         if (view.softwareSystemId === oldId) updated.softwareSystemId = newId;
         if (view.containerId === oldId) updated.containerId = newId;
-        if (view.deploymentNodeId === oldId) updated.deploymentNodeId = newId;
         return updated;
       });
 
@@ -233,10 +220,9 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
       );
       
       // Filter out views associated with this element
-      const viewsToRemove = state.workspace.views.filter(v => 
-        v.softwareSystemId === id || 
-        v.containerId === id || 
-        v.deploymentNodeId === id
+      const viewsToRemove = state.workspace.views.filter(v =>
+        v.softwareSystemId === id ||
+        v.containerId === id
       );
       const viewIdsToRemove = new Set(viewsToRemove.map(v => v.id));
       const nextViews = state.workspace.views.filter(v => !viewIdsToRemove.has(v.id));

@@ -32,15 +32,10 @@ export const C4_COLORS: Record<C4ElementType, C4ColorScheme> = {
     border: '#5d82a8',
     text: '#000000',
   },
-  deploymentNode: {
-    background: '#ffffff',
-    border: '#888888',
-    text: '#000000',
-  },
-  infrastructureNode: {
-    background: '#ffffff',
-    border: '#888888',
-    text: '#000000',
+  group: {
+    background: 'rgba(255, 255, 255, 0.05)',
+    border: '#cccccc',
+    text: '#333333',
   },
 } as const;
 

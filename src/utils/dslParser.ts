@@ -176,7 +176,7 @@ export class StructurizrDSLParser {
   private handleModelLine(line: string, elementStack: ElementStack[], context: ParseContext) {
     // Identifier = type "name" "desc" "tech" {
     // Note: [\w.]+ allows dots in identifiers (ss.wa)
-    const elementMatch = line.match(/^([\w.]+)\s*=\s*(person|softwareSystem|container|component|deploymentNode|infrastructureNode)\s+"([^"]*)"(?:\s+"([^"]*)")?(?:\s+"([^"]*)")?(?:\s+"([^"]*)")?/);
+    const elementMatch = line.match(/^([\w.]+)\s*=\s*(person|softwareSystem|container|component)\s+"([^"]*)"(?:\s+"([^"]*)")?(?:\s+"([^"]*)")?(?:\s+"([^"]*)")?/);
 
     // Group: group "name" {
     const groupMatch = line.match(/^group\s+"([^"]*)"/);
@@ -273,7 +273,7 @@ export class StructurizrDSLParser {
       // Also save position with full identifier if the element is nested
       // (e.g., "NewContainer_230c.NewComponent_f5bf")
       // This handles the case where DSL uses short identifiers but parser creates full ones
-      for (const [key, value] of context.identifierMap) {
+      for (const [key] of context.identifierMap) {
         if (key.endsWith(`.${identifier}`)) {
           context.positions.set(key, pos);
         }
@@ -315,7 +315,7 @@ export class StructurizrDSLParser {
       }
     }
 
-    // Auto-generate missing views for Software Systems and Deployment Nodes
+    // Auto-generate missing views for Software Systems
     const systems = context.elements.filter(e => e.type === 'softwareSystem');
     for (const sys of systems) {
       const hasView = context.views.some(v => v.softwareSystemId === sys.id && v.type === 'container');
@@ -327,20 +327,6 @@ export class StructurizrDSLParser {
           softwareSystemId: sys.id,
           name: `${sys.name} - Containers`,
           description: `Auto-generated container view`
-        });
-      }
-    }
-
-    const dNodes = context.elements.filter(e => e.type === 'deploymentNode');
-    for (const dNode of dNodes) {
-      const hasView = context.views.some(v => v.type === 'deployment' && (v.key === `deploy-${dNode.id}` || v.name.includes(dNode.name)));
-      if (!hasView) {
-        context.views.push({
-          id: uuidv4(),
-          key: `deploy-${dNode.id}`,
-          type: 'deployment',
-          name: `${dNode.name} - Deployment`,
-          description: `Auto-generated deployment view`
         });
       }
     }

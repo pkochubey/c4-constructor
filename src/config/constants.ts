@@ -13,8 +13,6 @@ export const C4_DEFAULT_SIZES = {
   softwareSystem: { width: 200, height: 120 },
   container: { width: 200, height: 120 },
   component: { width: 180, height: 100 },
-  deploymentNode: { width: 240, height: 160 },
-  infrastructureNode: { width: 200, height: 120 },
 } as const;
 
 export const C4_GROUP_DEFAULT_SIZE = { width: 600, height: 400 } as const;
@@ -24,8 +22,6 @@ export const C4_LABELS: Record<C4ElementType, string> = {
   softwareSystem: 'Software System',
   container: 'Container',
   component: 'Component',
-  deploymentNode: 'Deployment Node',
-  infrastructureNode: 'Infrastructure Node',
   group: 'Group',
 } as const;
 
@@ -161,8 +157,6 @@ export const ELEMENT_TYPES: C4ElementType[] = [
   'softwareSystem',
   'container',
   'component',
-  'deploymentNode',
-  'infrastructureNode',
 ] as const;
 
 // ============================================

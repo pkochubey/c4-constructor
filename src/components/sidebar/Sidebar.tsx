@@ -23,13 +23,11 @@ export const Sidebar: React.FC = () => {
     switch (currentView.type) {
       case 'systemLandscape':
       case 'systemContext':
-        return ['person', 'softwareSystem', 'deploymentNode'].includes(type);
+        return ['person', 'softwareSystem'].includes(type);
       case 'container':
         return ['container'].includes(type);
       case 'component':
         return ['component'].includes(type);
-      case 'deployment':
-        return ['deploymentNode', 'infrastructureNode', 'container'].includes(type);
       default:
         return true;
     }

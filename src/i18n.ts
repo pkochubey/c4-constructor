@@ -37,8 +37,6 @@ const resources = {
                 softwareSystem: 'Software System',
                 container: 'Container',
                 component: 'Component',
-                deploymentNode: 'Deployment Node',
-                infrastructureNode: 'Infrastructure Node',
                 new: 'New {{type}}',
                 external: 'External'
             },
@@ -89,7 +87,6 @@ const resources = {
                     system: 'Software System can contain Containers.',
                     container: 'Container can contain Components only.',
                     person: 'Person and Software System are typically top-level in a landscape.',
-                    deployment: 'Deployment Node can contain other Deployment Nodes, Infrastructure Nodes, or Containers.',
                     smartPaletteTitle: 'Smart Palette Behavior',
                     smartPaletteDesc: 'The sidebar palette automatically disables elements that don\'t belong in your current view.',
                     containerView: 'Only Containers are enabled. Adding a Person here is invalid.',

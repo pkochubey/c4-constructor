@@ -94,26 +94,6 @@ const CanvasInner: React.FC = () => {
         return workspace.elements.filter(e => e.id !== containerId && (relatedIds.has(e.id)));
       }
 
-      case 'deployment': {
-        const nodeId = currentView.deploymentNodeId;
-        if (!nodeId) {
-          return workspace.elements.filter(e =>
-            ['deploymentNode', 'infrastructureNode', 'container', 'group'].includes(e.type)
-          );
-        }
-
-        const children = workspace.elements.filter(e => e.parentId === nodeId);
-        const childIds = new Set(children.map(c => c.id));
-        const relatedIds = new Set([...childIds]);
-
-        workspace.relationships.forEach(rel => {
-          if (childIds.has(rel.sourceId)) relatedIds.add(rel.targetId);
-          if (childIds.has(rel.targetId)) relatedIds.add(rel.sourceId);
-        });
-
-        return workspace.elements.filter(e => e.id !== nodeId && (relatedIds.has(e.id) || e.parentId === nodeId));
-      }
-
       default:
         return workspace.elements;
     }
@@ -201,11 +181,11 @@ const CanvasInner: React.FC = () => {
 
   const findParentGroup = useCallback((nodeId: string | null, position: { x: number; y: number }) => {
     for (const group of workspace.elements) {
-      if (!['group', 'softwareSystem', 'container', 'deploymentNode'].includes(group.type)) continue;
+      if (!['group', 'softwareSystem', 'container'].includes(group.type)) continue;
       if (nodeId && group.id === nodeId) continue;
 
-      const width = group.size?.width || (group.type === 'deploymentNode' ? 240 : 200);
-      const height = group.size?.height || (group.type === 'deploymentNode' ? 180 : 100);
+      const width = group.size?.width || 200;
+      const height = group.size?.height || 100;
 
       const groupBounds = {
         left: group.position.x,
@@ -309,7 +289,6 @@ const CanvasInner: React.FC = () => {
                 if (newParent.type === 'group') isValid = true;
                 if (newParent.type === 'softwareSystem' && (element.type === 'container' || element.type === 'group' || element.type === 'person')) isValid = true;
                 if (newParent.type === 'container' && element.type === 'component') isValid = true;
-                if (newParent.type === 'deploymentNode' && (element.type === 'deploymentNode' || element.type === 'infrastructureNode' || element.type === 'container')) isValid = true;
                 if (element.type === 'person' || element.type === 'group') isValid = true;
               }
 
@@ -412,8 +391,6 @@ const CanvasInner: React.FC = () => {
           finalParentId = currentView.softwareSystemId || undefined;
         } else if (currentView.type === 'component' && type === 'component') {
           finalParentId = currentView.containerId || undefined;
-        } else if (currentView.type === 'deployment' && (type === 'deploymentNode' || type === 'infrastructureNode' || type === 'container')) {
-          finalParentId = currentView.deploymentNodeId || undefined;
         }
       }
 

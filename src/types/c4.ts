@@ -5,8 +5,6 @@ export type C4ElementType =
   | 'softwareSystem'
   | 'container'
   | 'component'
-  | 'deploymentNode'
-  | 'infrastructureNode'
   | 'group';
 
 export type C4RelationshipType =
@@ -47,10 +45,9 @@ export interface C4Relationship {
 export interface C4View {
   id: string;
   key: string;
-  type: 'systemLandscape' | 'systemContext' | 'container' | 'component' | 'deployment';
+  type: 'systemLandscape' | 'systemContext' | 'container' | 'component';
   softwareSystemId?: string; // Root system for context/container/component views
   containerId?: string; // Root container for component views
-  deploymentNodeId?: string; // Root node for deployment views
   name: string;
   description: string;
 }
@@ -92,16 +89,6 @@ export const C4_COLORS: Record<C4ElementType, { background: string; border: stri
     border: '#5d82a8',
     text: '#000000'
   },
-  deploymentNode: {
-    background: '#ffffff',
-    border: '#888888',
-    text: '#000000'
-  },
-  infrastructureNode: {
-    background: '#ffffff',
-    border: '#888888',
-    text: '#000000'
-  },
   group: {
     background: 'rgba(255, 255, 255, 0.05)',
     border: '#cccccc',
@@ -115,8 +102,6 @@ export const C4_DEFAULT_SIZES: Record<C4ElementType, { width: number; height: nu
   softwareSystem: { width: 200, height: 120 },
   container: { width: 200, height: 120 },
   component: { width: 180, height: 100 },
-  deploymentNode: { width: 240, height: 160 },
-  infrastructureNode: { width: 200, height: 120 },
   group: { width: 400, height: 300 }
 };
 
@@ -126,7 +111,5 @@ export const C4_LABELS: Record<C4ElementType, string> = {
   softwareSystem: 'Software System',
   container: 'Container',
   component: 'Component',
-  deploymentNode: 'Deployment Node',
-  infrastructureNode: 'Infrastructure Node',
   group: 'Group'
 };

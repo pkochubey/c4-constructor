@@ -71,8 +71,6 @@ type C4ElementType =
   | 'softwareSystem'   // Software systems
   | 'container'        // Containers (apps, databases, services)
   | 'component'        // Components inside containers
-  | 'deploymentNode'   // Deployment infrastructure
-  | 'infrastructureNode' // Infrastructure (cloud, server, etc.)
   | 'group';           // Visual grouping only
 ```
 
@@ -86,7 +84,6 @@ Views control **what elements are visible** and **how they relate**:
 | `systemContext` | Elements related to one Software System | `softwareSystemId` |
 | `container` | Containers of one System + related | `softwareSystemId` |
 | `component` | Components of one Container + related | `containerId` |
-| `deployment` | Deployment structure | `deploymentNodeId` |
 
 **View filtering logic** (in `Canvas.tsx`):
 - Each view type filters `workspace.elements` differently
@@ -98,7 +95,6 @@ Views control **what elements are visible** and **how they relate**:
 **Valid parent-child combinations:**
 - Software System → Container, Person, Group
 - Container → Component
-- Deployment Node → Deployment Node, Infrastructure Node, Container
 - Group → Any element (visual grouping only)
 
 **Position handling:**
@@ -141,11 +137,10 @@ Each C4 element type has its own node component with:
 **Smart filtering** - shows only elements allowed in current view:
 ```typescript
 const allowedTypes = {
-  systemLandscape: ['person', 'softwareSystem', 'deploymentNode', 'group'],
+  systemLandscape: ['person', 'softwareSystem', 'group'],
   systemContext: ['person', 'softwareSystem', 'group'],
   container: ['container', 'person', 'group'],
-  component: ['component', 'person', 'group'],
-  deployment: ['deploymentNode', 'infrastructureNode', 'container', 'group']
+  component: ['component', 'person', 'group']
 }[currentView.type];
 ```
 
@@ -193,7 +188,7 @@ Converts C4Workspace → Structurizr DSL.
 **Features:**
 - Generates valid Structurizr DSL syntax
 - Creates hierarchical element definitions
-- Generates all views (landscape, context, container, component, deployment)
+- Generates all views (landscape, context, container, component)
 - Includes position comments for round-trip compatibility
 
 ## Styling Conventions
@@ -215,7 +210,6 @@ const C4_COLORS = {
   softwareSystem: { background: '#1168bd', border: '#1168bd' },
   container: { background: '#76a9fa', border: '#1168bd' },
   component: { background: '#389636', border: '#389636' },
-  deploymentNode: { background: '#cccccc', border: '#999999' },
   // ...
 };
 ```

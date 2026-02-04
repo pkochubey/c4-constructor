@@ -18,8 +18,6 @@ A visual constructor for C4 diagrams with Structurizr DSL export.
 - **Software System** - software systems
 - **Container** - containers (applications, databases)
 - **Component** - components inside containers
-- **Deployment Node** - deployment nodes
-- **Infrastructure Node** - infrastructure nodes
 
 ## Installation & Running
 

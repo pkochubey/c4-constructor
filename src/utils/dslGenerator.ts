@@ -84,8 +84,6 @@ export class StructurizrDSLGenerator {
 
       let typeKeyword = el.type as string;
       if (typeKeyword === 'softwareSystem') typeKeyword = 'softwareSystem';
-      if (typeKeyword === 'deploymentNode') typeKeyword = 'deploymentNode';
-      if (typeKeyword === 'infrastructureNode') typeKeyword = 'infrastructureNode';
 
       const properties = [
         `"${this.escape(el.name)}"`,
@@ -157,10 +155,6 @@ export class StructurizrDSLGenerator {
             viewHeader = `component ${containerIdent} "${sanitizedKey}" "${this.escape(view.description)}"`;
             validTypes = ['person', 'softwareSystem', 'container', 'component'];
             break;
-          case 'deployment':
-            viewHeader = `deployment * "Default" "${sanitizedKey}" "${this.escape(view.description)}"`;
-            validTypes = ['deploymentNode', 'infrastructureNode', 'container'];
-            break;
         }
 
         lines.push(`${indent2}${viewHeader} {`);
@@ -195,21 +189,19 @@ export class StructurizrDSLGenerator {
     const lines: string[] = [];
 
     // Hardcoded list of element tags for styles
-    const tags = ['Person', 'Software System', 'Container', 'Component', 'Deployment Node', 'Infrastructure Node'];
+    const tags = ['Person', 'Software System', 'Container', 'Component'];
     const backgrounds: Record<string, string> = {
       'Person': '#08427b',
       'Software System': '#1168bd',
       'Container': '#438dd5',
-      'Component': '#85bbf0',
-      'Deployment Node': '#ffffff',
-      'Infrastructure Node': '#ffffff'
+      'Component': '#85bbf0'
     };
 
     for (const tag of tags) {
       lines.push(`${indent3}element "${tag}" {`);
       if (tag === 'Person') lines.push(`${indent4}shape Person`);
       lines.push(`${indent4}background ${backgrounds[tag] || '#dddddd'}`);
-      lines.push(`${indent4}color ${tag === 'Component' || tag.includes('Node') ? '#000000' : '#ffffff'}`);
+      lines.push(`${indent4}color ${tag === 'Component' ? '#000000' : '#ffffff'}`);
       lines.push(`${indent3}}`);
     }
 
