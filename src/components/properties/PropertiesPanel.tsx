@@ -42,6 +42,7 @@ export const PropertiesPanel: React.FC = () => {
   const [isAddingRel, setIsAddingRel] = useState(false);
   const [newRelTargetId, setNewRelTargetId] = useState('');
   const [newRelDesc, setNewRelDesc] = useState(t('common.uses'));
+  const [newRelDirection, setNewRelDirection] = useState<'outbound' | 'inbound'>('outbound');
 
   // Sync form state with selection
   useEffect(() => {
@@ -54,6 +55,7 @@ export const PropertiesPanel: React.FC = () => {
       setIsAddingRel(false);
       setNewRelTargetId('');
       setNewRelDesc(t('common.uses'));
+      setNewRelDirection('outbound');
     } else if (selectedRelationship) {
       setDescription(selectedRelationship.description);
       setTechnology(selectedRelationship.technology || '');
@@ -88,7 +90,9 @@ export const PropertiesPanel: React.FC = () => {
   const handleAddRelationship = () => {
     const element = getSelectedElement();
     if (element && newRelTargetId) {
-      addRelationship(element.id, newRelTargetId, newRelDesc);
+      const sourceId = newRelDirection === 'outbound' ? element.id : newRelTargetId;
+      const targetId = newRelDirection === 'outbound' ? newRelTargetId : element.id;
+      addRelationship(sourceId, targetId, newRelDesc);
       setIsAddingRel(false);
       setNewRelTargetId('');
     }
@@ -162,27 +166,29 @@ export const PropertiesPanel: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center gap-3 p-2 bg-slate-50 rounded border border-slate-100">
-            <input
-              id="is-external"
-              type="checkbox"
-              className="w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500"
-              checked={isExternal}
-              onChange={(e) => {
-                const checked = e.target.checked;
-                setIsExternal(checked);
-                const currentElement = getSelectedElement();
-                if (currentElement) {
-                  updateElement(currentElement.id, { isExternal: checked });
-                }
-              }}
-            />
-            <label htmlFor="is-external" className="text-sm font-medium text-slate-700 cursor-pointer">
-              {t('properties.external')}
-            </label>
-          </div>
+          {!['component'].includes(selectedElement.type) && (
+            <div className="flex items-center gap-3 p-2 bg-slate-50 rounded border border-slate-100">
+              <input
+                id="is-external"
+                type="checkbox"
+                className="w-4 h-4 text-cyan-500 border-slate-300 rounded focus:ring-cyan-500"
+                checked={isExternal}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  setIsExternal(checked);
+                  const currentElement = getSelectedElement();
+                  if (currentElement) {
+                    updateElement(currentElement.id, { isExternal: checked });
+                  }
+                }}
+              />
+              <label htmlFor="is-external" className="text-sm font-medium text-slate-700 cursor-pointer">
+                {t('properties.external')}
+              </label>
+            </div>
+          )}
 
-          {['container', 'component', 'deploymentNode'].includes(selectedElement.type) && (
+          {['container', 'component'].includes(selectedElement.type) && (
             <div>
               <Input
                 label={t('properties.technology')}
@@ -201,7 +207,7 @@ export const PropertiesPanel: React.FC = () => {
             </div>
           )}
 
-          {['container', 'component'].includes(selectedElement.type) && (
+          {selectedElement.type === 'container' && (
             <div>
               <Select
                 label="Parent Identifier"
@@ -241,8 +247,38 @@ export const PropertiesPanel: React.FC = () => {
 
             {isAddingRel ? (
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4 flex flex-col gap-3">
+                {/* Direction selector */}
+                <div>
+                  <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-2 block">
+                    Direction
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setNewRelDirection('outbound')}
+                      className={`flex-1 px-3 py-2 text-xs font-medium rounded border transition-colors ${
+                        newRelDirection === 'outbound'
+                          ? 'bg-cyan-500 text-white border-cyan-500'
+                          : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      Outbound →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNewRelDirection('inbound')}
+                      className={`flex-1 px-3 py-2 text-xs font-medium rounded border transition-colors ${
+                        newRelDirection === 'inbound'
+                          ? 'bg-cyan-500 text-white border-cyan-500'
+                          : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      ← Inbound
+                    </button>
+                  </div>
+                </div>
                 <Select
-                  label={t('properties.targetElement')}
+                  label={newRelDirection === 'outbound' ? 'To Element' : 'From Element'}
                   value={newRelTargetId}
                   onChange={(e) => setNewRelTargetId(e.target.value)}
                   options={[

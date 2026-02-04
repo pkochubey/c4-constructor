@@ -15,16 +15,25 @@ const PersonIcon: React.FC<{ color: string }> = ({ color }) => (
   </svg>
 );
 
-const ExternalWrapper: React.FC<{ isExternal?: boolean, children: React.ReactNode, borderColor: string }> = ({ isExternal, children, borderColor }) => {
+const ExternalWrapper: React.FC<{ isExternal?: boolean, children: React.ReactNode }> = ({ isExternal, children }) => {
   if (!isExternal) return <>{children}</>;
+  // Light red-brown color for external systems
   return (
     <div style={{
       padding: '3px',
-      border: `2px solid ${borderColor}`,
+      border: `2px solid #D32F2F`,
       borderRadius: '10px',
       backgroundColor: 'transparent'
     }}>
-      {children}
+      {/* Override colors for external elements using CSS filter */}
+      <div style={{
+        position: 'relative',
+        borderRadius: '6px',
+        overflow: 'hidden',
+        filter: 'sepia(1) hue-rotate(-50deg) saturate(1.5)'
+      }}>
+        {children}
+      </div>
     </div>
   );
 };
@@ -36,7 +45,7 @@ export const PersonNode: React.FC<NodeProps<C4NodeData>> = memo(({ data, selecte
 
   return (
     <div className="c4-node-container" style={{ cursor: 'pointer' }}>
-      <ExternalWrapper isExternal={element.isExternal} borderColor={colors.border}>
+      <ExternalWrapper isExternal={element.isExternal}>
         <div
           className="c4-node c4-person"
           style={{
@@ -90,7 +99,7 @@ export const SoftwareSystemNode: React.FC<NodeProps<C4NodeData>> = memo(({ data,
 
   return (
     <div onDoubleClick={onDoubleClick} style={{ cursor: 'pointer' }}>
-      <ExternalWrapper isExternal={element.isExternal} borderColor={colors.border}>
+      <ExternalWrapper isExternal={element.isExternal}>
         <div
           className="c4-node c4-software-system"
           style={{
@@ -140,7 +149,7 @@ export const ContainerNode: React.FC<NodeProps<C4NodeData>> = memo(({ data, sele
 
   return (
     <div onDoubleClick={onDoubleClick} style={{ cursor: 'pointer' }}>
-      <ExternalWrapper isExternal={element.isExternal} borderColor={colors.border}>
+      <ExternalWrapper isExternal={element.isExternal}>
         <div
           className="c4-node c4-container"
           style={{

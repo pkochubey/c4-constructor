@@ -80,18 +80,8 @@ const CanvasInner: React.FC = () => {
       case 'component': {
         const containerId = currentView.containerId;
         if (!containerId) return workspace.elements;
-        const components = workspace.elements.filter(e => e.parentId === containerId && e.type === 'component');
-        const componentIds = new Set(components.map(c => c.id));
-        const relatedIds = new Set([...componentIds]);
-
-        workspace.relationships.forEach(rel => {
-          if (componentIds.has(rel.sourceId)) relatedIds.add(rel.targetId);
-          if (componentIds.has(rel.targetId)) relatedIds.add(rel.sourceId);
-          if (rel.sourceId === containerId) relatedIds.add(rel.targetId);
-          if (rel.targetId === containerId) relatedIds.add(rel.sourceId);
-        });
-
-        return workspace.elements.filter(e => e.id !== containerId && (relatedIds.has(e.id)));
+        // Show only components of this container, no related elements
+        return workspace.elements.filter(e => e.parentId === containerId && e.type === 'component');
       }
 
       default:
@@ -114,7 +104,9 @@ const CanvasInner: React.FC = () => {
       );
 
       let displayPosition = { ...element.position };
-      if (!shouldStick && element.parentId) {
+      // Only accumulate parent positions if parent is visible in the current view
+      // In Component View, the Container is hidden (focus zone), so don't add its position
+      if (!shouldStick && element.parentId && currentView?.type !== 'component') {
         let currentParentId: string | undefined = element.parentId;
         while (currentParentId) {
           const p = workspace.elements.find(e => e.id === currentParentId);
@@ -178,6 +170,13 @@ const CanvasInner: React.FC = () => {
       }))
     );
   }, [elementsLocked, setNodes]);
+
+  // Auto-fit view when switching between views
+  useEffect(() => {
+    setTimeout(() => {
+      reactFlowInstance.fitView();
+    }, 100);
+  }, [currentViewId, reactFlowInstance]);
 
   const findParentGroup = useCallback((nodeId: string | null, position: { x: number; y: number }) => {
     for (const group of workspace.elements) {
@@ -309,7 +308,7 @@ const CanvasInner: React.FC = () => {
             }
           }
 
-          if (element.parentId) {
+          if (element.parentId && currentView?.type !== 'component') {
             const currentParent = workspace.elements.find(e => e.id === element.parentId);
             if (currentParent) {
               updateElement(change.id, {
@@ -387,9 +386,12 @@ const CanvasInner: React.FC = () => {
       let finalParentId = parentId || undefined;
 
       if (!finalParentId && currentView) {
+        // In Container view, auto-parent to Software System
         if (currentView.type === 'container' && type === 'container') {
           finalParentId = currentView.softwareSystemId || undefined;
-        } else if (currentView.type === 'component' && type === 'component') {
+        }
+        // In Component view, auto-parent to Container (use absolute position since container is hidden)
+        if (currentView.type === 'component' && type === 'component') {
           finalParentId = currentView.containerId || undefined;
         }
       }
@@ -398,10 +400,17 @@ const CanvasInner: React.FC = () => {
       if (finalParentId) {
         const parent = workspace.elements.find(e => e.id === finalParentId);
         if (parent) {
-          adjustedPosition = {
-            x: position.x - parent.position.x,
-            y: position.y - parent.position.y
-          };
+          // For visible parents (groups, systems), adjust position relative to parent
+          // For hidden focus zone parents (in component view), use absolute position
+          const parentIsVisible = currentView?.type === 'systemLandscape' ||
+                                  (currentView?.type === 'container' && parent.type === 'softwareSystem');
+          if (parentIsVisible) {
+            adjustedPosition = {
+              x: position.x - parent.position.x,
+              y: position.y - parent.position.y
+            };
+          }
+          // else: use absolute position for hidden parents
         }
       }
 

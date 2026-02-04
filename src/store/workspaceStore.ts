@@ -101,18 +101,31 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
 
   addElement: (type: C4ElementType, position: { x: number; y: number }, parentId?: string) => {
     const id = uuidv4();
-    const newElement: C4Element = {
-      id,
-      type,
-      name: `New ${C4_LABELS[type]}`,
-      description: '',
-      position,
-      parentId,
-      isExternal: false,
-      ...(type === 'group' ? { size: { ...C4_GROUP_DEFAULT_SIZE } } : {})
-    };
 
     set((state) => {
+      const baseName = `New ${C4_LABELS[type]}`;
+
+      // Generate unique name by adding numeric suffix if needed
+      let finalName = baseName;
+      let suffix = 1;
+      const existingNames = new Set(state.workspace.elements.map(e => e.name));
+
+      while (existingNames.has(finalName)) {
+        finalName = `${baseName} ${suffix}`;
+        suffix++;
+      }
+
+      const newElement: C4Element = {
+        id,
+        type,
+        name: finalName,
+        description: '',
+        position,
+        parentId,
+        isExternal: false,
+        ...(type === 'group' ? { size: { ...C4_GROUP_DEFAULT_SIZE } } : {})
+      };
+
       const nextElements = [...state.workspace.elements, newElement];
       const nextViews = [...state.workspace.views];
 
@@ -138,7 +151,16 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
       };
     });
 
-    return newElement;
+    // Return a basic element object (the actual one is created inside set)
+    return {
+      id,
+      type,
+      name: `New ${C4_LABELS[type]}`,
+      description: '',
+      position,
+      parentId,
+      isExternal: false
+    } as C4Element;
   },
 
   renameElement: (id: string, newName: string) => {
@@ -179,11 +201,25 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
         return updated;
       });
 
-      // Update views
+      // Update views - both IDs and names
       const nextViews = state.workspace.views.map(view => {
         let updated = { ...view };
-        if (view.softwareSystemId === oldId) updated.softwareSystemId = newId;
-        if (view.containerId === oldId) updated.containerId = newId;
+        if (view.softwareSystemId === oldId) {
+          updated.softwareSystemId = newId;
+          // Update view name for Software System's container view
+          if (element.type === 'softwareSystem') {
+            updated.name = `${newName} - Containers`;
+            updated.description = `Container view for ${newName}`;
+          }
+        }
+        if (view.containerId === oldId) {
+          updated.containerId = newId;
+          // Update view name for Container's component view
+          if (element.type === 'container') {
+            updated.name = `${newName} - Components`;
+            updated.description = `Component view for ${newName}`;
+          }
+        }
         return updated;
       });
 
