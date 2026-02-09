@@ -1,10 +1,11 @@
 # C4 Constructor
 
-A visual constructor for C4 diagrams with Structurizr DSL export.
 [![Build and Publish Docker Image](https://github.com/pkochubey/c4-constructor/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/pkochubey/c4-constructor/actions/workflows/docker-publish.yml)
 [![Docker Pulls](https://img.shields.io/docker/pulls/pkochubey/c4-constructor.svg)](https://hub.docker.com/r/pkochubey/c4-constructor)
 [![Docker Image Version](https://img.shields.io/docker/v/pkochubey/c4-constructor?sort=semver)](https://hub.docker.com/r/pkochubey/c4-constructor)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/pkochubey/c4-constructor)
+
+A visual constructor for C4 diagrams with Structurizr DSL export.
 
 ![main window](https://github.com/pkochubey/c4-constructor/blob/master/resources/image.png?raw=true)
 
