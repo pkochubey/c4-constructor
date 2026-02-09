@@ -66,9 +66,19 @@ export const PropertiesPanel: React.FC = () => {
   const getPotentialParents = () => {
     const element = getSelectedElement();
     if (!element) return [];
-    if (element.type === 'container') return workspace.elements.filter((e) => e.type === 'softwareSystem');
-    if (element.type === 'component') return workspace.elements.filter((e) => e.type === 'container');
-    return [];
+
+    return workspace.elements.filter((e) => {
+      if (e.id === element.id) return false;
+      // Everything can be in a group
+      if (e.type === 'group') return true;
+      // Containers can be in systems
+      if (element.type === 'container' && e.type === 'softwareSystem') return true;
+      // Components can be in containers
+      if (element.type === 'component' && e.type === 'container') return true;
+      // Systems/Persons/Groups can also be in systems if needed (C4 allows)
+      if (['softwareSystem', 'person', 'group'].includes(element.type) && e.type === 'softwareSystem') return true;
+      return false;
+    });
   };
 
   const createViewForElement = () => {
@@ -207,27 +217,25 @@ export const PropertiesPanel: React.FC = () => {
             </div>
           )}
 
-          {selectedElement.type === 'container' && (
-            <div>
-              <Select
-                label="Parent Identifier"
-                value={parentId}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setParentId(val);
-                  const currentElement = getSelectedElement();
-                  if (currentElement) {
-                    updateElement(currentElement.id, { parentId: val || undefined });
-                  }
-                }}
-                options={[
-                  { value: '', label: 'None' },
-                  ...getPotentialParents().map((p) => ({ value: p.id, label: p.name })),
-                ]}
-                fullWidth
-              />
-            </div>
-          )}
+          <div>
+            <Select
+              label={t('properties.parent') || 'Parent'}
+              value={parentId}
+              onChange={(e) => {
+                const val = e.target.value;
+                setParentId(val);
+                const currentElement = getSelectedElement();
+                if (currentElement) {
+                  updateElement(currentElement.id, { parentId: val || undefined });
+                }
+              }}
+              options={[
+                { value: '', label: 'None' },
+                ...getPotentialParents().map((p) => ({ value: p.id, label: getElementLabel(p) })),
+              ]}
+              fullWidth
+            />
+          </div>
 
           {/* Relationships Section */}
           <div className="pt-4 border-t border-slate-100">
@@ -250,7 +258,7 @@ export const PropertiesPanel: React.FC = () => {
                 {/* Direction selector */}
                 <div>
                   <label className="text-[10px] font-semibold text-slate-500 uppercase tracking-wide mb-2 block">
-                    Direction
+                    {t('properties.direction')}
                   </label>
                   <div className="flex gap-2">
                     <button
@@ -262,7 +270,7 @@ export const PropertiesPanel: React.FC = () => {
                           : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      Outbound →
+                      {t('properties.outbound')} →
                     </button>
                     <button
                       type="button"
@@ -273,12 +281,12 @@ export const PropertiesPanel: React.FC = () => {
                           : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'
                       }`}
                     >
-                      ← Inbound
+                      ← {t('properties.inbound')}
                     </button>
                   </div>
                 </div>
                 <Select
-                  label={newRelDirection === 'outbound' ? 'To Element' : 'From Element'}
+                  label={newRelDirection === 'outbound' ? t('properties.toElement') : t('properties.fromElement')}
                   value={newRelTargetId}
                   onChange={(e) => setNewRelTargetId(e.target.value)}
                   options={[
@@ -347,7 +355,7 @@ export const PropertiesPanel: React.FC = () => {
                 })
               }
               {workspace.relationships.filter(r => r.sourceId === selectedElement.id || r.targetId === selectedElement.id).length === 0 && (
-                <div className="text-[10px] text-slate-400 italic py-2 text-center">No connections found</div>
+                <div className="text-[10px] text-slate-400 italic py-2 text-center">{t('properties.noRelationships')}</div>
               )}
             </div>
           </div>

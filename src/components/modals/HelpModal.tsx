@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../ui';
 
 interface HelpModalProps {
     isOpen: boolean;
@@ -56,18 +57,6 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                         <h2 style={{ margin: 0, color: '#111827', fontSize: '24px', fontWeight: 800 }}>{t('help.title')}</h2>
                         <p style={{ margin: '4px 0 0', color: '#6b7280', fontSize: '14px' }}>{t('help.subtitle')}</p>
                     </div>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            background: '#f3f4f6', border: 'none', borderRadius: '50%', width: '36px', height: '36px',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            transition: 'background 0.2s'
-                        }}
-                        onMouseOver={e => e.currentTarget.style.background = '#e5e7eb'}
-                        onMouseOut={e => e.currentTarget.style.background = '#f3f4f6'}
-                    >
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#374151" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
                 </div>
 
                 {/* Tabs */}
@@ -103,13 +92,13 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                                     <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: '#08427b' }}></div>
                                     <h3 style={{ margin: 0, fontSize: '18px' }}>{t('elements.person')}</h3>
                                 </div>
-                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>Represents one of the human users of your software system (e.g., Customers, Staff, Admin).</p>
+                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>{t('elements.personDesc')}</p>
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                                     <div style={{ width: '12px', height: '12px', borderRadius: '4px', backgroundColor: '#1168bd' }}></div>
                                     <h3 style={{ margin: 0, fontSize: '18px' }}>{t('elements.softwareSystem')}</h3>
                                 </div>
-                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>The highest level of abstraction. Represents a technical solution that adds value to users.</p>
+                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>{t('elements.softwareSystemDesc')}</p>
                             </section>
 
                             <section>
@@ -117,20 +106,19 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                                     <div style={{ width: '12px', height: '12px', borderRadius: '4px', backgroundColor: '#438dd5' }}></div>
                                     <h3 style={{ margin: 0, fontSize: '18px' }}>{t('elements.container')}</h3>
                                 </div>
-                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>A separately deployable/runnable unit (e.g., Docker container, Database, Web App, File System).</p>
+                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>{t('elements.containerDesc')}</p>
 
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                                     <div style={{ width: '12px', height: '12px', borderRadius: '2px', backgroundColor: '#85bbf0' }}></div>
                                     <h3 style={{ margin: 0, fontSize: '18px' }}>{t('elements.component')}</h3>
                                 </div>
-                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>A grouping of related functionality behind an interface (e.g., Controller, Repository, Service).</p>
+                                <p style={{ fontSize: '14px', marginBottom: '24px' }}>{t('elements.componentDesc')}</p>
                             </section>
                         </div>
                     )}
 
                     {activeTab === 'hierarchy' && (
                         <div>
-                            <h3 style={{ marginTop: 0 }}>{t('help.rules.title')}</h3>
                             <p>{t('help.rules.subtitle')}</p>
 
                             <div style={{ backgroundColor: '#f3f4f6', padding: '20px', borderRadius: '12px', marginBottom: '24px' }}>
@@ -138,27 +126,7 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                                     <li style={{ marginBottom: '8px' }}>{t('help.rules.system')}</li>
                                     <li style={{ marginBottom: '8px' }}>{t('help.rules.container')}</li>
                                     <li style={{ marginBottom: '8px' }}>{t('help.rules.person')}</li>
-                                    <li style={{ marginBottom: '8px' }}>{t('help.rules.deployment')}</li>
                                 </ul>
-                            </div>
-
-                            <h3 style={{ fontSize: '16px', color: '#111827', marginBottom: '12px' }}>{t('help.rules.smartPaletteTitle')}</h3>
-                            <p style={{ fontSize: '14px', marginBottom: '16px' }}>{t('help.rules.smartPaletteDesc')}</p>
-
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
-                                <div style={{ fontSize: '13px', padding: '12px', backgroundColor: '#ecfdf5', borderRadius: '8px', border: '1px solid #d1fae5' }}>
-                                    <strong style={{ color: '#065f46' }}>Container View:</strong><br />
-                                    {t('help.rules.containerView')}
-                                </div>
-                                <div style={{ fontSize: '13px', padding: '12px', backgroundColor: '#eff6ff', borderRadius: '8px', border: '1px solid #dbeafe' }}>
-                                    <strong style={{ color: '#1e40af' }}>Component View:</strong><br />
-                                    {t('help.rules.componentView')}
-                                </div>
-                            </div>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', borderLeft: '4px solid #f59e0b', backgroundColor: '#fffbeb' }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                                <span style={{ fontSize: '13px', color: '#92400e' }}><strong>Pro Tip:</strong> {t('help.rules.proTip')}</span>
                             </div>
                         </div>
                     )}
@@ -193,15 +161,6 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
                                     </ul>
                                 </div>
                             </div>
-
-                            <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '12px', fontFamily: 'monospace', fontSize: '12px', whiteSpace: 'pre-wrap' }}>
-                                {`# Safe ID Generation Example
-softwareSystem "Payment Gateway" "Handles transactions" "Java/Spring" {
-  container "Database" "PostgreSQL" {
-    component "Vault" "Stores keys"
-  }
-}`}
-                            </div>
                         </div>
                     )}
 
@@ -209,23 +168,14 @@ softwareSystem "Payment Gateway" "Handles transactions" "Java/Spring" {
 
                 {/* Footer */}
                 <div style={{ padding: '20px 32px', borderTop: '1px solid #eee', backgroundColor: '#f9fafb', display: 'flex', justifyContent: 'flex-end' }}>
-                    <button
+                    <Button
                         onClick={onClose}
-                        style={{
-                            padding: '10px 24px',
-                            backgroundColor: '#111827',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '8px',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: 'transform 0.1s'
-                        }}
+                        variant="primary"
                         onMouseDown={e => e.currentTarget.style.transform = 'scale(0.98)'}
                         onMouseUp={e => e.currentTarget.style.transform = 'scale(1)'}
                     >
                         {t('common.gotIt')}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -35,6 +35,36 @@ npm run build
 npm run preview
 ```
 
+## Docker
+
+You can build and run the application using Docker. A multi-stage build is used with Node.js for building and Nginx for serving.
+
+### Quick Run
+
+```bash
+# Build the image
+docker build -t c4-constructor .
+
+# Run the container
+docker run -d -p 8080:80 c4-constructor
+```
+
+### Building with Versioning
+
+The version of the application is stored in the `version` file. You can use it to tag your image:
+
+**Bash:**
+
+```bash
+docker build -t c4-constructor:$(cat version) .
+```
+
+**PowerShell:**
+
+```powershell
+docker build -t c4-constructor:$(Get-Content version) .
+```
+
 ## Usage
 
 1. **Add elements**: Drag an element from the left panel onto the canvas

@@ -109,8 +109,8 @@ export const DSLEditorModal: React.FC<DSLEditorModalProps> = ({
           <Button variant="primary" size="sm" onClick={handleCopy}>
             {copied ? '✓ ' : ''}{t('modals.editor.copy')}
           </Button>
-          <Button variant="primary" onClick={handleDownload}>
-            Download .dsl
+          <Button variant="primary" onClick={handleDownload} size="sm">
+            {t('modals.editor.download')}
           </Button>
         </div>
         <div className="flex gap-3">

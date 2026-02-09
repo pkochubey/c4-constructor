@@ -178,32 +178,6 @@ const CanvasInner: React.FC = () => {
     }, 100);
   }, [currentViewId, reactFlowInstance]);
 
-  const findParentGroup = useCallback((nodeId: string | null, position: { x: number; y: number }) => {
-    for (const group of workspace.elements) {
-      if (!['group', 'softwareSystem', 'container'].includes(group.type)) continue;
-      if (nodeId && group.id === nodeId) continue;
-
-      const width = group.size?.width || 200;
-      const height = group.size?.height || 100;
-
-      const groupBounds = {
-        left: group.position.x,
-        right: group.position.x + width,
-        top: group.position.y,
-        bottom: group.position.y + height
-      };
-
-      if (
-        position.x >= groupBounds.left &&
-        position.x <= groupBounds.right &&
-        position.y >= groupBounds.top &&
-        position.y <= groupBounds.bottom
-      ) {
-        return group.id;
-      }
-    }
-    return null;
-  }, [workspace.elements]);
 
   const edges: Edge[] = useMemo(() => {
     const visibleElementIds = new Set(visibleElements.map(e => e.id));
@@ -278,35 +252,7 @@ const CanvasInner: React.FC = () => {
             };
           }
 
-          if (change.dragging === false) {
-            const newParentId = findParentGroup(change.id, absolutePosition);
-            if (newParentId !== element.parentId) {
-              const newParent = workspace.elements.find(p => p.id === newParentId);
-              let isValid = !newParentId;
 
-              if (newParent) {
-                if (newParent.type === 'group') isValid = true;
-                if (newParent.type === 'softwareSystem' && (element.type === 'container' || element.type === 'group' || element.type === 'person')) isValid = true;
-                if (newParent.type === 'container' && element.type === 'component') isValid = true;
-                if (element.type === 'person' || element.type === 'group') isValid = true;
-              }
-
-              if (isValid) {
-                if (newParentId && newParent) {
-                  updateElement(change.id, {
-                    position: {
-                      x: absolutePosition.x - newParent.position.x,
-                      y: absolutePosition.y - newParent.position.y
-                    },
-                    parentId: newParentId
-                  });
-                } else {
-                  updateElement(change.id, { position: absolutePosition, parentId: undefined });
-                }
-                return;
-              }
-            }
-          }
 
           if (element.parentId && currentView?.type !== 'component') {
             const currentParent = workspace.elements.find(e => e.id === element.parentId);
@@ -331,7 +277,7 @@ const CanvasInner: React.FC = () => {
         }
       });
     },
-    [onNodesChangeInternal, updateElement, selectElement, deleteElement, findParentGroup, workspace.elements, currentView, elementsLocked]
+    [onNodesChangeInternal, updateElement, selectElement, deleteElement, workspace.elements, currentView, elementsLocked]
   );
 
   const onEdgesChange = useCallback(
@@ -382,10 +328,9 @@ const CanvasInner: React.FC = () => {
         y: event.clientY - reactFlowBounds.top
       });
 
-      const parentId = findParentGroup(null, position);
-      let finalParentId = parentId || undefined;
+      let finalParentId: string | undefined = undefined;
 
-      if (!finalParentId && currentView) {
+      if (currentView) {
         // In Container view, auto-parent to Software System
         if (currentView.type === 'container' && type === 'container') {
           finalParentId = currentView.softwareSystemId || undefined;
@@ -416,7 +361,7 @@ const CanvasInner: React.FC = () => {
 
       addElement(type, adjustedPosition, finalParentId);
     },
-    [addElement, reactFlowInstance, findParentGroup, currentView, workspace.elements]
+    [addElement, reactFlowInstance, currentView, workspace.elements]
   );
 
   const onNodeClick = useCallback(
