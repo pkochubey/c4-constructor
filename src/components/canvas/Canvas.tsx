@@ -63,24 +63,12 @@ const CanvasInner: React.FC = () => {
       case 'container': {
         const systemId = currentView.softwareSystemId;
         if (!systemId) return workspace.elements;
-        const containers = workspace.elements.filter(e => e.parentId === systemId && e.type === 'container');
-        const containerIds = new Set(containers.map(c => c.id));
-        const relatedIds = new Set([...containerIds]);
-
-        workspace.relationships.forEach(rel => {
-          if (containerIds.has(rel.sourceId)) relatedIds.add(rel.targetId);
-          if (containerIds.has(rel.targetId)) relatedIds.add(rel.sourceId);
-          if (rel.sourceId === systemId) relatedIds.add(rel.targetId);
-          if (rel.targetId === systemId) relatedIds.add(rel.sourceId);
-        });
-
-        return workspace.elements.filter(e => e.id !== systemId && (relatedIds.has(e.id)));
+        return workspace.elements.filter(e => e.parentId === systemId && e.type === 'container');
       }
 
       case 'component': {
         const containerId = currentView.containerId;
         if (!containerId) return workspace.elements;
-        // Show only components of this container, no related elements
         return workspace.elements.filter(e => e.parentId === containerId && e.type === 'component');
       }
 
